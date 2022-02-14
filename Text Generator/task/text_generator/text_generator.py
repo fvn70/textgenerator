@@ -1,4 +1,3 @@
-from nltk.tokenize import word_tokenize
 
 # fn = "../test/corpus.txt"
 fn = input()
@@ -9,11 +8,11 @@ try:
 except FileNotFoundError:
     print(f"File {fn} not found")
 
-# tokens = word_tokenize(text)
 tokens = text.split()
-print("Corpus statistics")
-print(f"All tokens: {len(tokens)}")
-print(f"Unique tokens: {len(set(tokens))}")
+bigrams = []
+for i in range(len(tokens) - 1):
+    bigrams.append(tokens[i] + ' ' + tokens[i + 1])
+print(f"Number of bigrams: {len(bigrams)}\n")
 
 while True:
     cmd = input()
@@ -21,7 +20,8 @@ while True:
         break
     try:
         idx = int(cmd)
-        print(tokens[idx])
+        b = bigrams[idx].split()
+        print(f"Head: {b[0]} Tail: {b[1]}")
     except IndexError:
         msg = "Index Error. Please input an integer that is in the range of the corpus."
         print(msg)
