@@ -1,3 +1,5 @@
+from nltk.tokenize import WhitespaceTokenizer
+from collections import Counter
 
 # fn = "../test/corpus.txt"
 fn = input()
@@ -8,22 +10,30 @@ try:
 except FileNotFoundError:
     print(f"File {fn} not found")
 
-tokens = text.split()
+tk = WhitespaceTokenizer()
+tokens = tk.tokenize(text)
+
 bigrams = []
 for i in range(len(tokens) - 1):
-    bigrams.append(tokens[i] + ' ' + tokens[i + 1])
-print(f"Number of bigrams: {len(bigrams)}\n")
+    bigrams.append((tokens[i], tokens[i+1]))
+
+dic = {}
+for k, v in bigrams:
+    dic.setdefault(k, []).append(v)
+
+dic = {k: Counter(dic[k]) for k in dic}
 
 while True:
-    cmd = input()
+    cmd = input('\n')
     if cmd == "exit":
         break
     try:
-        idx = int(cmd)
-        b = bigrams[idx].split()
-        print(f"Head: {b[0]} Tail: {b[1]}")
-    except IndexError:
-        msg = "Index Error. Please input an integer that is in the range of the corpus."
+        head = cmd
+        print(f"Head: {head}")
+        tails = dic[head].most_common()
+        for t in tails:
+            print(f"Tail: {t[0]} Count: {t[1]}")
+
+    except KeyError:
+        msg = "Key Error. The requested word is not in the model. Please input another word."
         print(msg)
-    except (ValueError, TypeError):
-        print("Type Error. Please input an integer.")
